@@ -1,0 +1,6 @@
+# dealwatch/.prettierignore
+node_modules
+.next
+out
+public
+coverage
