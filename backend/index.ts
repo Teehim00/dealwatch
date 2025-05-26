@@ -35,11 +35,26 @@ async function buildServer() {
   });
 
   // ✅ Sample API route
-  app.get('/api/deals', async () => {
-    return [
+  app.get('/api/deals', async (req, reply) => {
+    const { store, sort } = req.query as { store?: string; sort?: string };
+
+    let data = [
       { id: 1, title: 'iPhone 15 ลดราคา', store: 'Shopee', price: 28900 },
       { id: 2, title: 'หูฟังลด 60%', store: 'Lazada', price: 990 },
+      { id: 3, title: 'PowerBank ลดราคา', store: 'Shopee', price: 590 },
     ];
+
+    if (store) {
+      data = data.filter(d => d.store === store);
+    }
+
+    if (sort === 'price_asc') {
+      data.sort((a, b) => a.price - b.price);
+    } else if (sort === 'price_desc') {
+      data.sort((a, b) => b.price - a.price);
+    }
+
+    return data;
   });
 
   // ✅ Handle WebSocket connection
