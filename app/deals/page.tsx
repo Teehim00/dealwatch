@@ -17,22 +17,37 @@ export default function DealsPage() {
   const [deals, setDeals] = useState<Deal[]>([]);
   const [search, setSearch] = useState('');
   const [storeFilter, setStoreFilter] = useState('');
+  const [sort, setSort] = useState('');
+  const [loading, setLoading] = useState(true); // ✅ Loading State
+  console.log('sort', sort);
 
   useEffect(() => {
     const fetchDeals = async () => {
-      const res = await fetch('http://localhost:3001/api/deals');
-      const data = await res.json();
-      setDeals(data);
+      setLoading(true);
+      try {
+        const res = await fetch('http://localhost:3001/api/deals');
+        const data = await res.json();
+        setDeals(data);
+      } catch (err) {
+        console.error('Error fetching deals:', err);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchDeals();
   }, []);
 
-  const filteredDeals = deals.filter(deal => {
-    return (
-      (search === '' || deal.title.toLowerCase().includes(search.toLowerCase())) &&
-      (storeFilter === '' || deal.store === storeFilter)
-    );
-  });
+  const filteredDeals = deals
+    .filter(
+      deal =>
+        (search === '' || deal.title.toLowerCase().includes(search.toLowerCase())) &&
+        (storeFilter === '' || deal.store === storeFilter)
+    )
+    .sort((a, b) => {
+      if (sort === 'lowToHigh') return a.price - b.price;
+      if (sort === 'highToLow') return b.price - a.price;
+      return 0;
+    });
 
   const storeList = [...new Set(deals.map(d => d.store))];
 
@@ -46,22 +61,35 @@ export default function DealsPage() {
             <Sidebar />
           </div>
         </div>
+
         {/* RIGHT */}
         <div className="flex w-full flex-col gap-8 xl:w-2/2">
           <div className="p-4">
             <h2 className="mb-4 text-2xl font-bold">🔥 โปรโมชันล่าสุด</h2>
+
             <DealsFilter
               search={search}
               store={storeFilter}
+              sort={sort}
               onSearchChange={setSearch}
               onStoreChange={setStoreFilter}
+              onSortChange={setSort}
               stores={storeList}
             />
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {filteredDeals.map(deal => (
-                <DealCard key={deal.id} {...deal} />
-              ))}
-            </div>
+
+            {/* ✅ Loading State */}
+            {loading ? (
+              <p className="text-gray-500">กำลังโหลดข้อมูล...</p>
+            ) : filteredDeals.length === 0 ? (
+              // ✅ Empty State
+              <p className="text-gray-500">ไม่พบดีลที่ตรงกับเงื่อนไข</p>
+            ) : (
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {filteredDeals.map(deal => (
+                  <DealCard key={deal.id} {...deal} />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
