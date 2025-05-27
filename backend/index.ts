@@ -57,6 +57,16 @@ async function buildServer() {
     return data;
   });
 
+  // ✅ Sample API route
+  app.get('/api/stores', async (req, reply) => {
+    const stores = [
+      { id: 1, name: 'Shopee', logo: 'https://placehold.co/64x64', dealCount: 5 },
+      { id: 2, name: 'Lazada', logo: 'https://placehold.co/64x64', dealCount: 8 },
+      { id: 3, name: 'JD Central', logo: 'https://placehold.co/64x64', dealCount: 4 },
+    ];
+    return stores;
+  });
+
   // ✅ Handle WebSocket connection
   app.ready().then(() => {
     app.io.on('connection', (socket: Socket) => {

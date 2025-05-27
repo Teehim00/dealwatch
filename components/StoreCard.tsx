@@ -1,10 +1,18 @@
 // components/StoreCard.tsx
-export default function StoreCard({ name }: { name: string }) {
-    return (
-      <div className="bg-white p-4 rounded-lg shadow hover:bg-gray-50">
-        <h2 className="text-xl font-semibold">{name}</h2>
-        <p className="text-gray-500">ดูโปรโมชันทั้งหมดในร้านนี้</p>
-      </div>
-    )
-  }
-  
+export default function StoreCard({
+  name,
+  logo,
+  dealCount,
+}: {
+  name: string;
+  logo: string;
+  dealCount: number;
+}) {
+  return (
+    <div className="rounded-lg border p-4 shadow-sm transition hover:shadow-md">
+      <img src={logo} alt={name} className="mb-2 h-16 w-16 object-contain" />
+      <h3 className="text-lg font-semibold">{name}</h3>
+      <p className="text-sm text-gray-600">{dealCount} ดีล</p>
+    </div>
+  );
+}
