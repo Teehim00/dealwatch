@@ -1,8 +1,40 @@
+// app/stores/page.tsx
+'use client';
+
 import Sidebar from '@/components/Sidebar';
 import Topbar from '@/components/Topbar';
+import StoreCard from '@/components/StoreCard';
+import { useEffect, useState } from 'react';
 
-// app/stores/page.tsx
+type Store = {
+  id: number;
+  name: string;
+  logo: string;
+  dealCount: number;
+};
+
 export default function StoresPage() {
+  const [stores, setStores] = useState<Store[]>([]);
+  const [loading, setLoading] = useState(true);
+  console.log('📦 Stores:', stores);
+
+  useEffect(() => {
+    const fetchStores = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch('http://localhost:3001/api/stores');
+        const data = await res.json();
+        setStores(data);
+      } catch (err) {
+        console.error('Error fetching stores:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStores();
+  }, []);
+
   return (
     <>
       <Topbar />
@@ -15,17 +47,21 @@ export default function StoresPage() {
         </div>
         {/* RIGHT */}
         <div className="flex w-full flex-col gap-8 xl:w-2/2">
-          <main className="bg-blue-700 p-6">
-            <h1 className="mb-4 text-3xl font-bold">🏬 Stores</h1>
-            <ul className="space-y-4">
-              {['Shopee', 'Lazada', 'JD Central'].map(store => (
-                <li key={store} className="rounded-lg bg-white p-4 shadow hover:bg-gray-50">
-                  <h2 className="text-xl font-semibold">{store}</h2>
-                  <p className="text-gray-500">ดูโปรโมชันทั้งหมดในร้านนี้</p>
-                </li>
-              ))}
-            </ul>
-          </main>
+          <div className="p-4">
+            <h2 className="mb-4 text-2xl font-bold">🏪 ร้านค้าทั้งหมด</h2>
+
+            {loading ? (
+              <p className="text-gray-500">กำลังโหลดข้อมูลร้านค้า...</p>
+            ) : stores.length === 0 ? (
+              <p className="text-gray-500">ไม่พบร้านค้า</p>
+            ) : (
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {stores.map(store => (
+                  <StoreCard key={store.id} {...store} />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </>
