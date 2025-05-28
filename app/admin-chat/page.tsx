@@ -1,9 +1,19 @@
+// import AdminChatRoom from '@/components/AdminChatRoom';
+
+// export default function AdminChatPage() {
+//   return (
+//     <main className="min-h-screen bg-gray-100 p-6">
+//       <AdminChatRoom />
+//     </main>
+//   );
+// }
+
 //app/chat/page.tsx
-import ChatRoom from '@/components/ChatRoom';
+import AdminChatRoom from '@/components/AdminChatRoom';
 import Sidebar from '@/components/Sidebar';
 import Topbar from '@/components/Topbar';
 
-export default function ChatPage() {
+export default function AdminChatPage() {
   return (
     <>
       <Topbar />
@@ -16,9 +26,9 @@ export default function ChatPage() {
         </div>
         {/* RIGHT */}
         <div className="flex w-full flex-col gap-8 xl:w-2/2">
-          <div className="p-6">
-            <ChatRoom />
-          </div>
+          <main className="min-h-screen bg-gray-100 p-6">
+            <AdminChatRoom />
+          </main>
         </div>
       </div>
     </>
