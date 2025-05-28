@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { Menu, X } from 'lucide-react';
+import { Menu } from 'lucide-react';
 
 const navItems = [
   { label: 'Dashboard', href: '/dashboard' },
@@ -40,15 +40,15 @@ export default function Topbar() {
 
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="rounded-md border border-gray-300 bg-gray-100 p-2 hover:bg-gray-200 lg:hidden"
+            className="rounded-md border border-gray-300 bg-gray-100 p-2 hover:bg-gray-200 xl:hidden"
             aria-label="Toggle menu"
           >
             <Menu className="h-6 w-6" />
           </button>
 
           {/* Notifications & User */}
-          <span className="hidden text-gray-600 lg:inline">🔔</span>
-          <span className="hidden text-gray-600 lg:inline">👤 {username || 'No user'}</span>
+          <span className="hidden text-gray-600 xl:inline">🔔</span>
+          <span className="hidden text-gray-600 xl:inline">👤 {username || 'No user'}</span>
           <button
             onClick={handleLogout}
             className="hidden rounded bg-red-500 px-3 py-1 text-sm text-white hover:bg-red-600 xl:inline"
@@ -60,7 +60,7 @@ export default function Topbar() {
 
       {/* Mobile Menu Overlay */}
       {menuOpen && (
-        <div className="absolute top-16 right-0 z-50 w-1/3 bg-white shadow-md lg:hidden">
+        <div className="absolute top-16 right-0 z-50 w-1/3 bg-white shadow-md xl:hidden">
           <nav className="flex flex-col space-y-2 p-4">
             {navItems.map(item => (
               <Link
