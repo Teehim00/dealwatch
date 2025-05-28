@@ -1,3 +1,4 @@
+// app/deals/page.tsx
 'use client';
 
 import Sidebar from '@/components/Sidebar';
@@ -25,7 +26,7 @@ export default function DealsPage() {
     const fetchDeals = async () => {
       setLoading(true);
       try {
-        const res = await fetch('http://localhost:3001/api/deals');
+        const res = await fetch('http://localhost:3001/api/scrape');
         const data = await res.json();
         setDeals(data);
       } catch (err) {

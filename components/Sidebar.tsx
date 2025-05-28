@@ -17,24 +17,6 @@ export default function Sidebar() {
   return (
     <div className="top-0 left-0 flex h-screen w-64 flex-col bg-white p-4 shadow-md">
       <h1 className="mb-6 text-2xl font-bold">📦 DealWatch</h1>
-      {/* <nav className="space-y-4">
-        <Link href="/dashboard" className="block text-blue-600 hover:underline">
-          Dashboard
-        </Link>
-        <Link href="/deals" className="block text-blue-600 hover:underline">
-          All Deals
-        </Link>
-        <Link href="/notifications" className="block text-blue-600 hover:underline">
-          Notifications
-        </Link>
-        <Link href="/chat" className="block text-blue-600 hover:underline">
-          Live Chat
-        </Link>
-        <Link href="/settings" className="block text-blue-600 hover:underline">
-          Settings
-        </Link>
-      </nav> */}
-
       <nav className="space-y-2">
         {navItems.map(item => (
           <Link
