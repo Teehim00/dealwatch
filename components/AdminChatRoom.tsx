@@ -1,3 +1,4 @@
+//components/AdminChatRoom.tsx
 'use client';
 import { useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';

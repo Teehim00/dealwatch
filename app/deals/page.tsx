@@ -6,12 +6,16 @@ import Topbar from '@/components/Topbar';
 import { useEffect, useState } from 'react';
 import DealCard from '@/components/DealCard';
 import DealsFilter from '@/components/DealsFilter';
+import { supabase } from '@/lib/supabase';
 
 type Deal = {
   id: number;
   title: string;
   store: string;
   price: number;
+  image: string;
+  link: string;
+  description: string;
 };
 
 export default function DealsPage() {
@@ -22,19 +26,42 @@ export default function DealsPage() {
   const [loading, setLoading] = useState(true); // ✅ Loading State
   console.log('sort', sort);
 
+  // useEffect(() => {
+  //   const fetchDeals = async () => {
+  //     setLoading(true);
+  //     try {
+  //       const res = await fetch('http://localhost:3001/api/scrape');
+  //       const data = await res.json();
+  //       setDeals(data);
+  //     } catch (err) {
+  //       console.error('Error fetching deals:', err);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchDeals();
+  // }, []);
+
   useEffect(() => {
     const fetchDeals = async () => {
       setLoading(true);
-      try {
-        const res = await fetch('http://localhost:3001/api/scrape');
-        const data = await res.json();
-        setDeals(data);
-      } catch (err) {
-        console.error('Error fetching deals:', err);
-      } finally {
-        setLoading(false);
+      const { data, error } = await supabase.from('deals').select('*');
+
+      if (error) {
+        console.error('❌ Supabase Error:', error);
+      } else {
+        console.log('✅ Supabase Deals:', data);
+        setDeals(
+          (data || []).map((deal: any) => ({
+            ...deal,
+            title: deal.name || deal.title || 'ไม่มีชื่อ',
+          }))
+        );
       }
+
+      setLoading(false);
     };
+
     fetchDeals();
   }, []);
 
@@ -50,7 +77,7 @@ export default function DealsPage() {
       return 0;
     });
 
-  const storeList = [...new Set(deals.map(d => d.store))];
+  const storeList = [...new Set(deals.map(d => d.store))].filter(Boolean);
 
   return (
     <>
