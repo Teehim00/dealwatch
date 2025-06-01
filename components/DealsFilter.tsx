@@ -34,11 +34,12 @@ export default function DealsFilter({
         className="w-full rounded border px-3 py-2 md:w-1/4"
       >
         <option value="">ทั้งหมด</option>
-        {stores.map(s => (
-          <option key={s} value={s}>
-            {s}
-          </option>
-        ))}
+        {Array.isArray(stores) &&
+          stores.map(s => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
       </select>
 
       {/* ตัวเลือกเรียงราคา */}

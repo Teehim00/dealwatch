@@ -4,6 +4,7 @@ import fastifyIO from 'fastify-socket.io';
 import cors from '@fastify/cors';
 import { Socket, Server as IOServer } from 'socket.io';
 
+
 declare module 'fastify' {
   interface FastifyInstance {
     io: IOServer;
@@ -35,6 +36,8 @@ async function buildServer() {
     },
   });
 
+
+
   app.get('/', async () => {
     return { message: 'DealWatch Backend API is running 🎉' };
   });
@@ -63,7 +66,6 @@ async function buildServer() {
     ];
   });
 
-  // ✅ MOCK SCRAPER: /api/scrape
   app.get('/api/scrape', async (req, reply) => {
     const mockScrapedDeals = [
       {
