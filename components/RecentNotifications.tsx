@@ -14,7 +14,7 @@ export default function RecentNotifications() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   useEffect(() => {
-    const fetchNotifications = async () => {
+    const fetch = async () => {
       const { data, error } = await supabase
         .from('notifications')
         .select('*')
@@ -28,22 +28,22 @@ export default function RecentNotifications() {
       }
     };
 
-    fetchNotifications();
+    fetch();
   }, []);
 
   return (
     <div className="rounded-xl bg-white p-6 shadow">
-      <h3 className="mb-2 text-lg font-semibold">🔔 Recent Notifications</h3>
+      <h3 className="mb-2 text-lg font-semibold text-gray-600">🔔 New Deals</h3>
       {notifications.length === 0 ? (
         <p className="text-gray-600">ไม่มีการแจ้งเตือนล่าสุด</p>
       ) : (
-        <ul className="list-disc pl-5 text-sm text-gray-700 max-h-64 overflow-y-auto pr-2">
-          {notifications.map((notif) => (
-            <li key={notif.id}>
-              {notif.message}
+        <ul className="max-h-64 list-disc overflow-y-auto pr-2 pl-5 text-sm text-gray-700">
+          {notifications.map(n => (
+            <li key={n.id}>
+              {n.message}
               <br />
               <span className="text-xs text-gray-500">
-                {new Date(notif.created_at).toLocaleString('th-TH')}
+                {new Date(n.created_at).toLocaleString('th-TH')}
               </span>
             </li>
           ))}

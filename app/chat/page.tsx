@@ -7,7 +7,7 @@ export default function ChatPage() {
   return (
     <>
       <Topbar />
-      <div className="flex flex-1 flex-col gap-4 p-4 xl:flex-row">
+      <div className="flex flex-1 flex-col gap-4 bg-white p-4 xl:flex-row">
         {/* LEFT */}
         <div className="hidden w-full xl:block xl:w-1/5">
           <div className="h-full rounded-md">

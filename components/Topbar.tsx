@@ -1,6 +1,7 @@
 // components/Topbar.tsx
 'use client';
 
+import { useSupabaseClient, useSessionContext } from '@supabase/auth-helpers-react';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
@@ -10,38 +11,63 @@ import { Menu } from 'lucide-react';
 const navItems = [
   { label: 'Dashboard', href: '/dashboard' },
   { label: 'Deals', href: '/deals' },
-  { label: 'Stores', href: '/stores' },
+  { label: 'Favorites', href: '/favorites' },
   { label: 'Chat', href: '/chat' },
 ];
 
 export default function Topbar() {
   const [username, setUsername] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
+  const [email, setEmail] = useState<string>('');
+  const supabase = useSupabaseClient();
+  const { session } = useSessionContext();
   const router = useRouter();
   const pathname = usePathname();
 
-  useEffect(() => {
-    const saved = localStorage.getItem('username');
-    if (saved) setUsername(saved);
-  }, []);
+  console.log('username', username);
+  console.log('email', email);
 
-  const handleLogout = () => {
-    localStorage.removeItem('username');
-    router.push('/login');
+  // ดึงอีเมลจาก session มาแสดง
+  useEffect(() => {
+    console.log('Session:', session);
+
+    if (session?.user?.email) {
+      setEmail(session.user.email);
+    }
+    if (session?.user?.user_metadata?.username) {
+      setUsername(session.user.user_metadata.username);
+    }
+  }, [session]);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.replace('/loginPage');
   };
+
+  // useEffect(() => {
+  //   const saved = localStorage.getItem('username');
+  //   if (saved) setUsername(saved);
+  // }, []);
+
+  // const handleLogout = () => {
+  //   localStorage.removeItem('username');
+  //   router.push('/login');
+  // };
 
   return (
     <>
       {/* HEADER */}
       <header className="flex items-center justify-between bg-white p-4 shadow-md">
-        <h2 className="text-lg font-semibold">Welcome back, {username || 'Guest'}!</h2>
+        <h2 className="text-lg font-semibold text-gray-700">
+          Welcome back, {username || 'Guest'}!
+        </h2>
 
         <div className="flex items-center gap-4">
           {/* Mobile Menu Toggle */}
 
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="rounded-md border border-gray-300 bg-gray-100 p-2 hover:bg-gray-200 xl:hidden"
+            className="rounded-md border border-gray-300 bg-gray-600 p-2 hover:bg-gray-200 xl:hidden"
             aria-label="Toggle menu"
           >
             <Menu className="h-6 w-6" />
@@ -62,7 +88,7 @@ export default function Topbar() {
       {/* Mobile Menu Overlay */}
       {menuOpen && (
         <div className="absolute top-16 right-0 z-50 w-1/3 bg-white shadow-md xl:hidden">
-          <nav className="flex flex-col space-y-2 p-4">
+          <nav className="flex flex-col space-y-2 p-4 text-gray-800">
             {navItems.map(item => (
               <Link
                 key={item.href}

@@ -11,7 +11,7 @@ export default function DateFilter({
     <select
       value={selected}
       onChange={e => onChange(e.target.value)}
-      className="rounded border bg-white px-3 py-2"
+      className="rounded border bg-white px-3 py-2 text-gray-600"
     >
       <option value="all">ทั้งหมด</option>
       <option value="7days">7 วันล่าสุด</option>
