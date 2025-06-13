@@ -1,6 +1,5 @@
 // components/DealCard.tsx
-// import Image from 'next/image';
-import Image from 'next/image';
+
 import Link from 'next/link';
 
 export default function DealCard({
@@ -20,15 +19,10 @@ export default function DealCard({
     <Link href={`/deals/${id}`} className="block h-full">
       <div className="flex h-full flex-col justify-between overflow-hidden rounded-lg border bg-white p-4 shadow transition hover:shadow-xl">
         <div className="relative mb-3 aspect-[4/3] w-full overflow-hidden rounded">
-          <Image
+          <img
             src={image}
             alt={title}
-            fill
-            sizes="(max-width: 768px) 100vw,
-                   (max-width: 1200px) 50vw,
-                   33vw"
-            className="object-cover transition-transform duration-300 hover:scale-105"
-            priority={false}
+            className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
           />
         </div>
 
