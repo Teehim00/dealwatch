@@ -59,9 +59,6 @@
 //   );
 // }
 
-
-
-
 //components/ChatRoom.tsx
 'use client';
 import { useEffect, useState } from 'react';
@@ -120,12 +117,12 @@ export default function ChatRoom() {
 
   return (
     <div>
-      <h2 className="mb-2 text-2xl font-bold">💬 Live Chat</h2>
-      <div className="mb-2 h-64 overflow-y-auto rounded border bg-white p-2">
+      <h2 className="mb-2 text-2xl font-bold text-gray-500">💬 Live Chat</h2>
+      <div className="mb-2 h-64 overflow-y-auto rounded border border-black bg-white p-2">
         {messages.map((msg, i) => (
           <div key={i} className="mb-1 text-sm">
             <span className="font-semibold text-blue-600">{msg.user}</span>:{' '}
-            <span>{msg.message}</span>{' '}
+            <span className="text-gray-900">{msg.message}</span>{' '}
             <span className="ml-2 text-xs text-gray-400">
               {new Date(msg.timestamp).toLocaleTimeString()}
             </span>
@@ -137,7 +134,7 @@ export default function ChatRoom() {
           value={message}
           onChange={e => setMessage(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && sendMessage()}
-          className="flex-1 rounded border p-2"
+          className="flex-1 rounded border bg-white p-2 text-gray-700"
           placeholder="Type your message..."
         />
         <button
@@ -150,11 +147,3 @@ export default function ChatRoom() {
     </div>
   );
 }
-
-
-
-
-
-
-
-

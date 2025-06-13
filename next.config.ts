@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
 };
 module.exports = {
   images: {
-    domains: ['placehold.co'],
+    domains: ['www.jib.co.th'], 
   },
 };
 

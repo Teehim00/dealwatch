@@ -1,6 +1,13 @@
 'use client';
 import { Line } from 'react-chartjs-2';
-import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, PointElement, Tooltip } from 'chart.js';
+import {
+  Chart as ChartJS,
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  Tooltip,
+} from 'chart.js';
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Tooltip);
 
@@ -12,11 +19,11 @@ const mockData = [
 
 export default function PriceTrendChart() {
   const chartData = {
-    labels: mockData.map((d) => d.date),
+    labels: mockData.map(d => d.date),
     datasets: [
       {
         label: 'ราคาเฉลี่ย (บาท)',
-        data: mockData.map((d) => d.avgPrice),
+        data: mockData.map(d => d.avgPrice),
         fill: false,
         borderColor: 'rgb(75, 192, 192)',
         tension: 0.3,
@@ -26,7 +33,7 @@ export default function PriceTrendChart() {
 
   return (
     <div className="rounded-xl bg-white p-6 shadow">
-      <h3 className="mb-4 text-lg font-semibold">📉 แนวโน้มราคาเฉลี่ย</h3>
+      <h3 className="mb-4 text-lg font-semibold text-gray-600">📉 แนวโน้มราคาเฉลี่ย</h3>
       <Line data={chartData} />
     </div>
   );

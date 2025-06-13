@@ -24,14 +24,14 @@ export default function DealsFilter({
         value={search}
         onChange={e => onSearchChange(e.target.value)}
         placeholder="ค้นหาดีล..."
-        className="w-full rounded border px-3 py-2 md:w-1/2"
+        className="w-full rounded border px-3 py-2 text-gray-500 md:w-1/2"
       />
 
       {/* ตัวกรองร้านค้า */}
       <select
         value={store}
         onChange={e => onStoreChange(e.target.value)}
-        className="w-full rounded border px-3 py-2 md:w-1/4"
+        className="w-full rounded border px-3 py-2 text-gray-500 md:w-1/4"
       >
         <option value="">ทั้งหมด</option>
         {Array.isArray(stores) &&
@@ -46,7 +46,7 @@ export default function DealsFilter({
       <select
         value={sort}
         onChange={e => onSortChange(e.target.value)}
-        className="w-full rounded border px-3 py-2 md:w-1/4"
+        className="w-full rounded border px-3 py-2 text-gray-500 md:w-1/4"
       >
         <option value="">เรียงตาม</option>
         <option value="lowToHigh">ราคาต่ำ → สูง</option>
