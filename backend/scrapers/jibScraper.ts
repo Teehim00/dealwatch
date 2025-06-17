@@ -1,5 +1,4 @@
 // scrapers/jibScraper.ts
-
 import puppeteer from 'puppeteer';
 
 export type JibPromotion = {

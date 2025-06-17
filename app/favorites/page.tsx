@@ -113,7 +113,7 @@ export default function FavoritesPage() {
           <Sidebar />
         </div>
         <main className="flex-1 space-y-4">
-          <h2 className="text-2xl font-bold">❤️ รายการโปรดของคุณ</h2>
+          <h2 className="text-2xl font-bold text-gray-700">❤️ รายการโปรดของคุณ</h2>
 
           {favorites.length === 0 ? (
             <p className="text-gray-600">คุณยังไม่มีดีลโปรด</p>

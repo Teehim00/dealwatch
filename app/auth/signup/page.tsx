@@ -1,3 +1,4 @@
+// app/auth/singup/pang.tsx
 'use client';
 
 import { useState } from 'react';
@@ -17,22 +18,39 @@ export default function SignUpPage() {
     e.preventDefault();
     setErrorMsg(null);
 
-    const { error } = await supabase.auth.signUp({
+    // 1) สมัครสมาชิกกับ Supabase Auth
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        data: {
-          username: userName,
-        },
+        data: { username: userName }, // จะไปเก็บใน auth.users.user_metadata
       },
     });
 
     if (error) {
       setErrorMsg(error.message);
-    } else {
-      // สมัครสำเร็จ → ไปหน้า login
-      router.push('/loginPage');
+      return;
     }
+
+    // 2) เขียนแถวใหม่ลงตาราง profiles (ใช้ user.id เป็น primary key ของเรา)
+    if (data.user) {
+      
+      const { error: profileError } = await supabase.from('profiles').insert({
+        id: data.user.id,
+        username: userName,
+        role: 'user',
+        created_at: new Date(),
+      });
+
+      if (profileError) {
+        console.error('❌ Error inserting profile:', JSON.stringify(profileError, null, 2));
+        setErrorMsg('เกิดข้อผิดพลาดขณะบันทึกข้อมูลผู้ใช้');
+        return;
+      }
+    }
+
+    // 3) ถ้าไม่มี error ทั้งคู่ → ไปหน้า login
+    router.push('/loginPage');
   };
 
   return (
