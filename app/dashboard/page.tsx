@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import PriceTrendChart from '@/components/PriceTrendChart';
 import DateFilter from '@/components/dashboard/DateFilter';
 import RecentNotifications from '@/components/RecentNotifications';
+// import AvgPriceChart from './components/AvgPriceChart';
 
 export default function DashboardPage() {
   const { session, isLoading } = useSessionContext();
@@ -90,6 +91,7 @@ export default function DashboardPage() {
 
             {/* Section ข้อมูลเพิ่มเติม */}
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+              {/* <AvgPriceChart/> */}
               <PriceTrendChart />
               <RecentNotifications />
             </div>
@@ -99,5 +101,3 @@ export default function DashboardPage() {
     </>
   );
 }
-
-

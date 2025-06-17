@@ -4,7 +4,7 @@
 import { useSupabaseClient, useSessionContext } from '@supabase/auth-helpers-react';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter, usePathname } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Menu } from 'lucide-react';
 
@@ -18,30 +18,89 @@ const navItems = [
 export default function Topbar() {
   const [username, setUsername] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
-  const [email, setEmail] = useState<string>('');
+  // const [email, setEmail] = useState<string>('');
   const supabase = useSupabaseClient();
   const { session } = useSessionContext();
-  const router = useRouter();
+  // const router = useRouter();
   const pathname = usePathname();
+  const [notifCount, setNotifCount] = useState(0);
 
-  console.log('username', username);
-  console.log('email', email);
+  console.log('notifCount', notifCount);
+  // console.log('email', email);
 
-  // ดึงอีเมลจาก session มาแสดง
+  // ดึงอีเมลจาก session มาแสดง โดยแสดงทั้งหมดของ โปรวันนั้น
+  // useEffect(() => {
+  //   if (!session) return;
+  //   setUsername(session.user.user_metadata.username);
+
+  //   // 1) โหลด count ที่แท้จริง (ไม่จำกัดจำนวนแถว)
+  //   supabase
+  //     .from('notifications')
+  //     .select('id', { count: 'exact', head: true }) // ✅ ใช้ head:true เพื่อให้ได้ count อย่างเดียว
+  //     .then(({ count }) => setNotifCount(count || 0));
+
+  //   // 1.1) (ตัวเลือก) โหลดรายการ 20 แถวล่าสุด
+  //   supabase
+  //     .from('notifications')
+  //     .select('*')
+  //     .order('created_at', { ascending: false }) // หรือใช้ 'id' ก็ได้ ถ้าไม่มี created_at
+  //     .limit(20)
+  //     .then(({ data }) => {
+  //       // setNotifications(data); // ถ้ามี state เก็บ notifications
+  //       console.log('20 รายการล่าสุด:', data);
+  //     });
+
+  //   // 2) realtime subscription
+  //   const channel = supabase
+  //     .channel('notifications')
+  //     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications' }, () =>
+  //       setNotifCount(c => c + 1)
+  //     )
+  //     .subscribe();
+
+  //   return () => {
+  //     supabase.removeChannel(channel);
+  //   };
+  // }, [session, supabase]);
+
+  // ชุดนี้แสดงโปรแค่ 20 ก่อน
   useEffect(() => {
-    console.log('Session:', session);
+    if (!session) return;
+    setUsername(session.user.user_metadata.username);
 
-    if (session?.user?.email) {
-      setEmail(session.user.email);
-    }
-    if (session?.user?.user_metadata?.username) {
-      setUsername(session.user.user_metadata.username);
-    }
-  }, [session]);
+    // โหลดรายการสูงสุด 20 แถว แล้วนับจำนวนจริงที่ได้
+    supabase
+      .from('notifications')
+      .select('*') // หรือเลือกเฉพาะ field ที่ต้องการ
+      .order('created_at', { ascending: false }) // ใหม่สุดก่อน
+      .limit(20)
+      .then(({ data, error }) => {
+        if (error) {
+          console.error('Error loading notifications:', error);
+          return;
+        }
+        setNotifCount(data?.length || 0); // ✅ นับจำนวนที่โหลดได้จริง
+        // setNotifications(data); // (option) เก็บรายการไว้แสดงใน UI
+      });
+
+    // realtime subscription
+    const channel = supabase
+      .channel('notifications')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'notifications' },
+        () => setNotifCount(c => Math.min(c + 1, 20)) // ✅ จำกัดไม่เกิน 20
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [session, supabase]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    router.replace('/loginPage');
+    window.location.href = '/loginPage';
   };
 
   // useEffect(() => {
@@ -62,6 +121,8 @@ export default function Topbar() {
           Welcome back, {username || 'Guest'}!
         </h2>
 
+        <span className="mr-4 ml-auto text-gray-600 xl:hidden">🔔{notifCount || ''}</span>
+
         <div className="flex items-center gap-4">
           {/* Mobile Menu Toggle */}
 
@@ -74,7 +135,7 @@ export default function Topbar() {
           </button>
 
           {/* Notifications & User */}
-          <span className="hidden text-gray-600 xl:inline">🔔</span>
+          <span className="hidden text-gray-600 xl:inline">🔔{notifCount || ''}</span>
           <span className="hidden text-gray-600 xl:inline">👤 {username || 'No user'}</span>
           <button
             onClick={handleLogout}

@@ -134,26 +134,69 @@ export default function DealsPage() {
                       store={deal.store}
                       price={deal.price}
                       image={deal.image}
-                   
                     />
                   ))}
                 </div>
 
                 {/* ✅ Pagination */}
-                <div className="mt-6 flex justify-center space-x-2">
-                  {Array.from({ length: totalPages }, (_, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setCurrentPage(i + 1)}
-                      className={`rounded px-4 py-2 text-sm font-medium ${
-                        currentPage === i + 1
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                      }`}
-                    >
-                      {i + 1}
-                    </button>
-                  ))}
+                <div className="mt-6 flex justify-center">
+                  <div className="flex flex-wrap items-center justify-center gap-2">
+                    {/* ปุ่มไปหน้าแรก */}
+                    {currentPage > 2 && (
+                      <>
+                        <button
+                          className="rounded border border-gray-500 bg-gray-700 px-4 py-2 text-white"
+                          onClick={() => setCurrentPage(1)}
+                        >
+                          1
+                        </button>
+                        {currentPage > 3 && (
+                          <span className="rounded border border-gray-500 bg-gray-700 px-4 py-2 text-white">
+                            ...
+                          </span>
+                        )}
+                      </>
+                    )}
+
+                    {/* ปุ่มรอบ currentPage */}
+                    {Array.from({ length: totalPages }, (_, i) => i + 1)
+                      .filter(
+                        page =>
+                          page === currentPage ||
+                          page === currentPage - 1 ||
+                          page === currentPage + 1
+                      )
+                      .map(page => (
+                        <button
+                          key={page}
+                          onClick={() => setCurrentPage(page)}
+                          className={`rounded border px-4 py-2 ${
+                            currentPage === page
+                              ? 'border-blue-600 bg-blue-600 text-white'
+                              : 'border-gray-500 bg-gray-700 text-white hover:bg-gray-600'
+                          }`}
+                        >
+                          {page}
+                        </button>
+                      ))}
+
+                    {/* ปุ่มไปหน้าสุดท้าย */}
+                    {currentPage < totalPages - 1 && (
+                      <>
+                        {currentPage < totalPages - 2 && (
+                          <span className="rounded border border-gray-500 bg-gray-700 px-4 py-2 text-white">
+                            ...
+                          </span>
+                        )}
+                        <button
+                          className="rounded border border-gray-500 bg-gray-700 px-4 py-2 text-white"
+                          onClick={() => setCurrentPage(totalPages)}
+                        >
+                          {totalPages}
+                        </button>
+                      </>
+                    )}
+                  </div>
                 </div>
               </>
             )}

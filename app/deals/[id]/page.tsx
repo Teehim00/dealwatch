@@ -7,6 +7,7 @@ import { useParams } from 'next/navigation';
 import Topbar from '@/components/Topbar';
 import Sidebar from '@/components/Sidebar';
 import Image from 'next/image';
+// import PriceTrendChart from '@/components/PriceTrendChart';
 
 interface Deal {
   id: string;
@@ -132,6 +133,7 @@ export default function DealDetailPage() {
               </div>
             </div>
           </div>
+          {/* <PriceTrendChart dealId={deal.id} /> */}
         </div>
       </div>
     </>
