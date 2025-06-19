@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useSupabaseClient, useSessionContext } from '@supabase/auth-helpers-react';
 
-
 type Notification = { id: string; message: string; created_at: string };
 
 export default function RecentNotifications() {
@@ -22,12 +21,12 @@ export default function RecentNotifications() {
   }, [session, supabase]);
 
   return (
-    <div className="rounded-xl bg-white p-6 shadow">
+    <div className="flex h-full w-full flex-col rounded-xl bg-white p-6 shadow">
       <h3 className="mb-2 text-lg font-semibold text-gray-600">🔔 New Deals</h3>
       {notes.length === 0 ? (
         <p className="text-gray-600">ไม่มีการแจ้งเตือนล่าสุด</p>
       ) : (
-        <ul className="max-h-64 list-disc overflow-y-auto pr-2 pl-5 text-sm text-gray-700">
+        <ul className="max-h-80 list-disc overflow-y-auto pr-2 pl-5 text-sm text-gray-700">
           {notes.map(n => (
             <li key={n.id}>
               {n.message}

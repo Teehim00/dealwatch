@@ -6,9 +6,9 @@ import { useRouter } from 'next/navigation';
 import Sidebar from '@/components/Sidebar';
 import Topbar from '@/components/Topbar';
 import { useEffect, useState } from 'react';
-import PriceTrendChart from '@/components/PriceTrendChart';
-import DateFilter from '@/components/dashboard/DateFilter';
+
 import RecentNotifications from '@/components/RecentNotifications';
+import NewDealsChart from '@/components/NewDealsChart';
 // import AvgPriceChart from './components/AvgPriceChart';
 
 export default function DashboardPage() {
@@ -18,7 +18,7 @@ export default function DashboardPage() {
 
   const [dealCount, setDealCount] = useState(0);
   const [storeCount, setStoreCount] = useState(0);
-  const [dateRange, setDateRange] = useState('all');
+  const [dateRange] = useState('all');
 
   useEffect(() => {
     if (!isLoading && !session) {
@@ -77,9 +77,6 @@ export default function DashboardPage() {
         <div className="flex w-full flex-col gap-8 xl:w-2/2">
           <main className="flex flex-col bg-blue-700 p-6">
             <h2 className="mb-4 text-2xl font-bold text-white">📊 Dashboard Overview</h2>
-            <div className="mb-4 flex justify-end">
-              <DateFilter selected={dateRange} onChange={setDateRange} />
-            </div>
 
             {/* สถิติภาพรวม */}
             <div className="mb-6 grid grid-cols-1 gap-4 text-gray-600 sm:grid-cols-2 lg:grid-cols-4">
@@ -92,8 +89,11 @@ export default function DashboardPage() {
             {/* Section ข้อมูลเพิ่มเติม */}
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
               {/* <AvgPriceChart/> */}
-              <PriceTrendChart />
-              <RecentNotifications />
+              {/* <PriceTrendChart /> */}
+              <NewDealsChart />
+              <div>
+                <RecentNotifications />
+              </div>
             </div>
           </main>
         </div>
