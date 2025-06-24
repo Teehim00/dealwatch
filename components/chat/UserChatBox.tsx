@@ -1,13 +1,16 @@
 'use client';
+
 import { useSupabaseClient, useSessionContext } from '@supabase/auth-helpers-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
+import { RealtimePostgresInsertPayload } from '@supabase/supabase-js';
 
 type Message = {
   id: string;
   user_id: string;
   content: string;
   from_admin: boolean;
+  is_read: boolean;
   created_at: string;
 };
 
@@ -19,61 +22,101 @@ export default function UserChatBox() {
   const [input, setInput] = useState('');
   const chatRef = useRef<HTMLDivElement>(null);
 
+  // Redirect if not logged in
   useEffect(() => {
-    if (isLoading) return;
-    if (!session) router.replace('/loginPage');
-  }, [session, isLoading, router]);
+    if (!isLoading && !session) {
+      router.replace('/loginPage');
+    }
+  }, [isLoading, session, router]);
 
+  // On mount: mark any unread admin→user messages as read
+  useEffect(() => {
+    if (isLoading || !session) return;
+
+    const markAsRead = async () => {
+      const uid = session.user.id;
+      // fetch unread admin messages
+      const { data: unread, error: fetchErr } = await supabase
+        .from('messages')
+        .select('id')
+        .eq('user_id', uid)
+        .eq('from_admin', true)
+        .eq('is_read', false);
+
+      if (fetchErr) {
+        console.error('Fetch unread admin messages error:', fetchErr);
+        return;
+      }
+
+      const ids = unread?.map(m => m.id) || [];
+      console.log('Will mark these IDs as read:', ids);
+      if (!ids.length) return;
+
+      // mark them read and select updated rows
+      const { data: updated, error: updateErr } = await supabase
+        .from('messages')
+        .update({ is_read: true })
+        .in('id', ids)
+        .select('id, is_read');
+
+      if (updateErr) {
+        console.error('Mark admin messages read error:', updateErr);
+      } else {
+        console.log('Update result:', updated);
+      }
+    };
+
+    markAsRead();
+  }, [session, isLoading, supabase]);
+
+  // Load chat history
   useEffect(() => {
     if (!session) return;
     const uid = session.user.id;
-
-    const loadHistory = async () => {
-      const { data } = await supabase
+    (async () => {
+      const { data, error } = await supabase
         .from('messages')
         .select('*')
         .eq('user_id', uid)
-        .order('created_at');
-      if (data) setMessages(data);
-    };
+        .order('created_at', { ascending: true });
+      if (error) {
+        console.error('Error fetching messages:', error.message);
+      } else {
+        setMessages(data || []);
+        setTimeout(() => chatRef.current?.scrollTo(0, chatRef.current.scrollHeight), 100);
+      }
+    })();
+  }, [session, supabase]);
 
-    loadHistory();
-  }, [session]);
-
+  // Subscribe to new messages
   useEffect(() => {
     if (!session) return;
     const uid = session.user.id;
-
     const channel = supabase
       .channel(`user-messages-${uid}`)
       .on(
         'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'messages',
-        },
-        payload => {
+        { event: 'INSERT', schema: 'public', table: 'messages', filter: `user_id=eq.${uid}` },
+        async (payload: RealtimePostgresInsertPayload<Message>) => {
           const newMsg = payload.new as Message;
-          if (newMsg.user_id === uid) {
-            setMessages(prev => [...prev, newMsg]);
-            setTimeout(() => {
-              chatRef.current?.scrollTo(0, chatRef.current.scrollHeight);
-            }, 100);
+          setMessages(prev => [...prev, newMsg]);
+          setTimeout(() => chatRef.current?.scrollTo(0, chatRef.current.scrollHeight), 100);
+          if (newMsg.from_admin && !newMsg.is_read) {
+            await supabase.from('messages').update({ is_read: true }).eq('id', newMsg.id);
           }
         }
       )
       .subscribe();
-
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [session]);
+  }, [session, supabase]);
 
+  // Send new message
   const send = async () => {
-    if (!input.trim()) return;
+    if (!session || !input.trim()) return;
     await supabase.from('messages').insert({
-      user_id: session!.user.id,
+      user_id: session.user.id,
       content: input,
       from_admin: false,
     });
