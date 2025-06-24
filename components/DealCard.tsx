@@ -9,7 +9,7 @@ export default function DealCard({
   price,
   image,
 }: {
-  id: string; // หรือ number แล้วแต่ฐานข้อมูล
+  id: string; 
   title: string;
   store: string;
   price: number;

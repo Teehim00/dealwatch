@@ -18,50 +18,12 @@ const navItems = [
 export default function Topbar() {
   const [username, setUsername] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
-  // const [email, setEmail] = useState<string>('');
   const supabase = useSupabaseClient();
   const { session } = useSessionContext();
-  // const router = useRouter();
   const pathname = usePathname();
   const [notifCount, setNotifCount] = useState(0);
 
   console.log('notifCount', notifCount);
-  // console.log('email', email);
-
-  // ดึงอีเมลจาก session มาแสดง โดยแสดงทั้งหมดของ โปรวันนั้น
-  // useEffect(() => {
-  //   if (!session) return;
-  //   setUsername(session.user.user_metadata.username);
-
-  //   // 1) โหลด count ที่แท้จริง (ไม่จำกัดจำนวนแถว)
-  //   supabase
-  //     .from('notifications')
-  //     .select('id', { count: 'exact', head: true }) // ✅ ใช้ head:true เพื่อให้ได้ count อย่างเดียว
-  //     .then(({ count }) => setNotifCount(count || 0));
-
-  //   // 1.1) (ตัวเลือก) โหลดรายการ 20 แถวล่าสุด
-  //   supabase
-  //     .from('notifications')
-  //     .select('*')
-  //     .order('created_at', { ascending: false }) // หรือใช้ 'id' ก็ได้ ถ้าไม่มี created_at
-  //     .limit(20)
-  //     .then(({ data }) => {
-  //       // setNotifications(data); // ถ้ามี state เก็บ notifications
-  //       console.log('20 รายการล่าสุด:', data);
-  //     });
-
-  //   // 2) realtime subscription
-  //   const channel = supabase
-  //     .channel('notifications')
-  //     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications' }, () =>
-  //       setNotifCount(c => c + 1)
-  //     )
-  //     .subscribe();
-
-  //   return () => {
-  //     supabase.removeChannel(channel);
-  //   };
-  // }, [session, supabase]);
 
   // ชุดนี้แสดงโปรแค่ 20 ก่อน
   useEffect(() => {
@@ -96,22 +58,12 @@ export default function Topbar() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [session, supabase]);
+  }, [session?.user.id]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     window.location.href = '/loginPage';
   };
-
-  // useEffect(() => {
-  //   const saved = localStorage.getItem('username');
-  //   if (saved) setUsername(saved);
-  // }, []);
-
-  // const handleLogout = () => {
-  //   localStorage.removeItem('username');
-  //   router.push('/login');
-  // };
 
   return (
     <>
